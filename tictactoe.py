@@ -1,7 +1,9 @@
 import player
 
+# This is the main game class, which has two players 1 and 2. 
 class TicTacToe:
 
+	#Constructors. 
 	def __init__(self, player_one, player_two):
 		self.board = ['.', '.', '.', '.', '.', '.', '.', '.', '.']
 		self.player_one = player_one
@@ -10,6 +12,7 @@ class TicTacToe:
 		self.player_two.set_status("Busy")
 		self.turn = self.player_one.get_address()
 
+	# Getters and setters.
 	def get_player_one(self):
 		return self.player_one
 
@@ -37,7 +40,6 @@ class TicTacToe:
 			return player_one
 		return player_two
 
-
 	def get_opponent(self, addr):
 		if(self.player_one.get_address == addr):
 			return player_two
@@ -49,6 +51,9 @@ class TicTacToe:
 	def set_turn(self, turn):
 		self.turn = turn
 
+	# This method positions the character 'O' or 'X' at the position in the board.
+	# This also checks if the position the user wants to enter the char is free or not. 
+	# returns true if successful, or false.
 	def move(self, position, char):
 		if(board[position] != '.'):
 			return False
@@ -58,6 +63,8 @@ class TicTacToe:
 	def get_board(self):
 		return self.board
 
+	# Checks if the user loses.
+	# Three in a row, three in a column and the diagonals are checked in this method. 
 	def is_game_over(self, char):
 		#Checks for Three in a column.
 		i = 0
