@@ -152,20 +152,3 @@ class Game(object):
 				over = True
 		self.over = over
 		return over
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
