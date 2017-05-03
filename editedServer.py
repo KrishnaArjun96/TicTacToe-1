@@ -43,7 +43,6 @@ while True:
 
 			#Game starts only if the number of players is 2. 
 			if(len(players) == 2):
-				print(str(players[1].get_address()))
 				game = TicTacToe(players[0], players[1])
 				respond_to_client(players[0], "Please make your move.", connectionSocket)
 				respond_to_client(players[1], "Please wait for your turn.", connectionSocket)
