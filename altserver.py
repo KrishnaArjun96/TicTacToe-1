@@ -7,11 +7,6 @@ from socket import *
 import time
 
 
-def get_player(address):
-    for player in players:
-        if player.get_address == address:
-            return player
-    return None
 
 
 serverSocket = socket(AF_INET, SOCK_STREAM)
@@ -161,3 +156,11 @@ while True:
 
 
 serverSocket.close()
+
+
+
+def get_player(address):
+    for player in players:
+        if player.get_address == address:
+            return player
+    return None
