@@ -37,8 +37,7 @@ def main():
     # logs in user in the format LOGIN <userid>
     command = input("Please log in:")
     userid = command
-    command = "LOGIN " + userid + " "
-    sock.sendall(command)
+    sock.send(command)
 
     address = sock.recv(1024)
 

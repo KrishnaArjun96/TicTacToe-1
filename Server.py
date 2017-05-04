@@ -42,6 +42,7 @@ while True:
     connectionSocket, addr = serverSocket.accept()
     try:
         message = connectionSocket.recv(8080)
+        print("HELLO..." + str(message))
         cmd = message.split(' ')
         # Contents of cmd are based on the options: LOGIN, HELP, PLACE or EXIT.
 
