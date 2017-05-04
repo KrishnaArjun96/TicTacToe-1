@@ -26,12 +26,14 @@ inputSocks = [ serverSocket ]
 
 # Output sockets to which we have to write
 outputSocks = []
+otherList = []
 
 while inputSocks:
     # Waiting for at least one of the sockets to be ready for processing
-    readable, writable, exceptional = select.select(inputSocks, outputSocks, inputSocks)
+    readable, writable, exceptional = select.select(inputSocks, outputSocks, otherList)
 
     for socks in readable:
+        print("Reached here.")
 
         if socks is serverSocket:
             connection, addr = serverSocket.accept()
