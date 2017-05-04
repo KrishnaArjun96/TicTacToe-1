@@ -22,7 +22,7 @@ def main():
     machine = input("Machine name:")
 
     # Connect the socket to the port where the server is listening
-    sock.connect((machine, port_number))
+    sock.connect((machine, int(port_number)))
     address = sock.recv(1024)
 
     # logs in user in the format LOGIN <userid>

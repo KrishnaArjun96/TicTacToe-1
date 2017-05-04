@@ -29,7 +29,7 @@ serverSocket = socket(AF_INET, SOCK_STREAM)
 
 # Prepare a sever socket
 serverPort = 8080
-serverSocket.bind(('', serverPort))
+serverSocket.bind(('localhost', serverPort))
 serverSocket.listen(2)
 game = None
 
