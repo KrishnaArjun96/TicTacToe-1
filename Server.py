@@ -1,133 +1,114 @@
 import player
 import tictactoe
+import select
 
 # import socket module
 from socket import *
 import time
 
+game = None
+players = []
 
-def get_player(address):
-    for player in players:
-        if player.get_address == address:
-            return player
-    return None
-
+main_player = None
+opponent = None
 
 serverSocket = socket(AF_INET, SOCK_STREAM)
-
+serverSocket.setblocking(0)
 # Prepare a sever socket
 serverPort = 8080
 serverSocket.bind(('localhost', serverPort))
 serverSocket.listen(2)
 
 print('Welcome to TicTacToe')
-    
-cPlayer = None
-game = None
 
-players = []
+# Declaring input sockets where we have to read
+inputSocks = [ serverSocket ]
 
-while True:
-    # Establish the connection
-    # addr : stores the address of the client.
-    if(len(players) != 2):
-        connectionSocket, addr = serverSocket.accept()
+# Output sockets to which we have to write
+outputSocks = []
+otherList = []
 
-    try:
-        message = connectionSocket.recv(8080)
-        print("HELLO..." + str(message))
-        cmd = message.split(' ')
-        # Contents of cmd are based on the options: LOGIN, HELP, PLACE or EXIT.
+while inputSocks:
+    # Waiting for at least one of the sockets to be ready for processing
+    readable, writable, exceptional = select.select(inputSocks, outputSocks, otherList)
 
-        if cmd[0] == "LOGIN":
-            # cmd shall be as follows: LOGIN <usr_id>.
-            # The first user to login shall be placed first in the list and hence gets to go first with 'X'
-            user_id = cmd[1]
-            arrival_time = time.time()
-            address = addr
+    for socks in readable:
+        print("Reached here.")
 
-            p = None
-            if len(players) == 0:
-                p = player.Player(user_id, arrival_time, connectionSocket, 'X')
-            else:
-                p = player.Player(user_id, arrival_time, connectionSocket, 'O')
+        if socks is serverSocket:
+            connection, addr = serverSocket.accept()
+            inputSocks.append(connection)
 
-            players.append(p)
-            p.get_address().send("Connected to Server")
-            
-            print(user_id+" has connected")
-
-            # Game starts only if the number of players is 2.
-            if len(players) == 2:
-                print("game started")
-                game = tictactoe.TicTacToe(players[0], players[1])
-
-                cPlayer = players[0]
+        else:
+            # Recieve the data in existing sockets
+            data = socks.recv(1024)
+            print(data)
+            cmd = data.split(' ')
+            # This is where we have to handle various cases LOGIN, PLACE and EXIT
+            if cmd[0] == 'LOGIN':
+                print("here")
+                user_id = cmd[1]
+                arrival_time = time.time()
                 
-                # Print board on each client.
-                print(game.print_board())
-                game.get_player_one().get_address().send(game.print_board())
-                game.get_player_two().get_address().send(game.print_board())
-                game.get_player_one().get_address().send("\n Please make your move.")
-                game.get_player_two().get_address().send("\n Please wait for your turn.")
+                p = None
+                if len(players) == 0:
+                    p = player.Player(user_id, arrival_time, socks, 'X')
+                else:
+                    p = player.Player(user_id, arrival_time, socks, 'O')
 
-        elif cmd[0] == "PLACE":
+                players.append(p)
+                socks.send("Welcome to TicTacToe\n")
+                print(user_id+ "is connected.\n")
 
-            if cPlayer.get_address() != connectionSocket:
-                connectionSocket.sendto("Please wait for your turn")
+                if len(players) == 2:
+                    print("Game Started")
+                    game = tictactoe.TicTacToe(players[0], players[1])
 
-            
-            else:
-                # Allows the user to make the move.
-                player = cPlayer
-
-                opponent = game.get_player_one
-                if(game.get_player_one() == cPlayer):
-                    opponent = game.get_player_two()
-
-                if game.move(cmd[1], player.get_char()):
-                    # Checks if the Game is OVER. Prints necessary messages if true.
+                    # Print board on each client.
                     game.get_player_one().get_address().send(game.print_board())
                     game.get_player_two().get_address().send(game.print_board())
-                    
-                    game_state = game.is_game_over(player.get_char())
-                    print(game_state)
+                    game.get_player_one().get_address().send("\n Please make your move.")
+                    game.get_player_two().get_address().send("\n Please wait for your turn.")
 
-                    if game_state:
-                        player.get_address().send("GameOver : You lose!")
-                        opponent.get_address().send("GameOver : You win!")
-                    else:
-                        player.get_address().send("Wait for your turn")
-                        opponent.get_address().send("Please play your turn")
-                        cPlayer = opponent
+                    main_player = game.get_player_one()
+                    opponent = game.get_player_two()
+
+            elif cmd[0] == 'PLACE':
+                if socks != main_player.get_address():
+                    socks.send("Please wait for your turn")
                 else:
-                    player.get_address().send("Invalid move!")
-                
-        elif cmd[0] == "EXIT":
-            # cmd shall be as follows: EXIT <usr_address>.
-            player = get_player(cmd[1])
+                    if game.move(int(cmd[1]), main_player.get_char()):
+                        socks.send(game.print_board())
+                        print("Placed " + cmd[1] + ".")
+                        opponent.get_address().send(game.print_board())
+                        print(game.print_board() + "\n")
 
-            # Sets status of opponent to 'Available'
-            opponent = game.get_opponent(cmd[1])
-            opponent.set_status("Available")
-            
-            connectionSocket.sendto("GameOver : Thank You for using this application.", player.get_address())
-            connectionSocket.sendto("GameOver : Your opponent exited the game.", opponent.get_address())
+                        game_state = game.is_game_over(main_player.get_char())
+                        if game_state:
+                            socks.send("GameOver : You lose!")
+                            opponent.get_address().send("GameOver : You win!")
+                            
+                        else:
+                            socks.send("Wait for your turn")
+                            opponent.get_address().send("Please play your turn")
 
-            # Removes from the list of players.
-            # Removes from the game
-            players.remove(player)
-            if game.is_player_one(player):
-                game.set_player_one(None)
-            if game.is_player_two(player):
-                game.set_player_two(None)
+                    else:
+                        socks.send("Invalid move!")
 
+            elif cmd[0] == 'EXIT':
+                opponent = game.get_opponent(cmd[1])
+                opponent.set_status("Available")
 
-    except IOError:
-        # Send response message for file not found
-        connectionSocket.send('HTTP/1.1 404 NOT FOUND!\r\n')
-        # Close client socket
-        connectionSocket.close()
+                main_player.get_address().send("GameOver : Thank You for using this application.")
+                main_player.get_address().send("GameOver : Your opponent exited the game.")
+
+                # Removes from the list of players.
+                # Removes from the game
+                players.remove(main_player)
+                if game.is_player_one(main_player):
+                    game.set_player_one(None)
+                if game.is_player_two(main_player):
+                    game.set_player_two(None)
 
 
 serverSocket.close()
