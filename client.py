@@ -12,6 +12,16 @@ def encode(command, addr):
         command = 'HELP ' + str(addr)
     return command
 
+def verify(message, sock, address):
+    while message[0] == "Error":
+        print(str(message[1]))
+        command = input(">:")
+        response = encode(command, address)
+        sock.sendall(response)
+        data = sock.recv(1024)
+        message = data.split(' : ')
+    print(str(message[1]))
+
 
 def main():
 
@@ -39,12 +49,13 @@ def main():
         #server sends message
         data = sock.recv(1024)
         message = data.split(' : ')
-        print(str(message[1]))
+        verify(message, sock, address)
+
 
         #server sends message
         data = sock.recv(1024)
         message = data.split(' : ')
-        print(str(message[1]))
+        verify(message, sock, address)
         
         if message[0] == "Message":
             command = input(">:")
@@ -54,12 +65,12 @@ def main():
         #server sends message
         data = sock.recv(1024)
         message = data.split(' : ')
-        print(str(message[1]))
+        verify(message, sock, address)
 
         #server sends message
         data = sock.recv(1024)
         message = data.split(' : ')
-        print(str(message[1]))
+        verify(message, sock, address)
         
         if message[0] == "Message":
             command = input(">:")
