@@ -15,7 +15,7 @@ def encode(command):
 def verify(message, sock):
     while message[0] == "Error":
         print(str(message[1]))
-        command = input(">:")
+        command = raw_input(">:")
         encode(command)
         response = encode(command)
         sock.sendall(response)
@@ -37,7 +37,7 @@ def main():
 
     # logs in user in the format LOGIN <userid>
 
-    userid = input("Please log in:")
+    userid = raw_input("Please log in:")
     command = "LOGIN " + userid + " "
     sock.send(command)
 
@@ -52,7 +52,7 @@ def main():
     # Start accepting commands from the player
     while True:
         
-        command = input(">:")
+        command = raw_input(">:")
 
         request = encode(command)
         sock.send(request)

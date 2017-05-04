@@ -92,15 +92,15 @@ while inputSocks:
                             socks.send("Wait for your turn")
                             opponent.get_address().send("Please play your turn")
                             
-                            #swap
-                            temp = main_player
-                            main_player = opponent
-                            opponent = temp
+                            # #swap
+                            # temp = main_player
+                            # main_player = opponent
+                            # opponent = temp
 
                     else:
                         socks.send("Invalid move!")
 
-            elif cmd[0] is 'EXIT':
+            elif cmd[0] == 'EXIT':
                 opponent = game.get_opponent(cmd[1])
                 opponent.set_status("Available")
 
