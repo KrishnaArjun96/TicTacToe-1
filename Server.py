@@ -7,7 +7,7 @@ import time
 
 
 def respond_to_client(player, message):
-    connectionSocket.sendTo(message, player.get_address)
+    connectionSocket.sendto(message, player.get_address())
 
 
 def get_player(address):
@@ -59,22 +59,26 @@ while True:
                 p = player.Player(user_id, arrival_time, address, 'O')
 
             players.append(p)
-            respond_to_client("Address : " + str(addr), addr)
+            connectionSocket.sendto("Address : " + str(addr), addr)
+            #respond_to_client("Address : " + str(addr), addr)
+            print(len(players))
 
             # Game starts only if the number of players is 2.
             if len(players) == 2:
+                print("game started")
                 game = tictactoe.TicTacToe(players[0], players[1])
                 # Print board on each client.
+                print(game.print_board())
                 connectionSocket.sendall(game.print_board())
-                respond_to_client(players[0], "Message : Please make your move.")
-                respond_to_client(players[1], "OpponentMessage : Please wait for your turn.")
+                connectionSocket.sendto("Message : Please make your move.", players[0].get_address())
+                connectionSocket.sendto("OpponentMessage : Please wait for your turn.", players[1].get_address())
 
         elif cmd[0] == "PLACE":
             # cmd shall be as follows: PLACE <location> <usr_address>.
             if cmd[2] != game.get_turn():
                 # If it is not the correct user, send appropriate message.
                 # The variable turn stores the address of the user who is supposed to play.
-                connectionSocket.sendTo("Error : Please wait for your turn.", cmd[2])
+                connectionSocket.sendto("Error : Please wait for your turn.", cmd[2])
             else:
                 # Allows the user to make the move.
                 player = get_player(cmd[2])
@@ -83,14 +87,17 @@ while True:
                     connectionSocket.sendall(game.print_board())
                     game_state = game.is_game_over(player.get_char())
                     if game_state:
-                        connectionSocket.sendTo("GameOver : You lose!", cmd[2])
+                        connectionSocket.sendto("GameOver : You lose!", cmd[2])
                         opponent = game.get_opponent(cmd[2])
-                        respond_to_client(opponent, "GameOver : You win!")
+                        # respond_to_client(opponent, "GameOver : You win!")
+                        connectionSocket.sendto("GameOver : You win!", opponent.get_address())
                     else:
-                        respond_to_client(opponent, "Message : Please make your move.")
-                        respond_to_client(player, "OpponentMessage : Please wait for your turn.")
+                        #respond_to_client(opponent, "Message : Please make your move.")
+                        #respond_to_client(player, "OpponentMessage : Please wait for your turn.")
+                        connectionSocket.sendto("Message : Please make your move.", opponent.get_address())
+                        connectionSocket.sendto("OpponentMessage : Please wait for your turn.", player.get_address())
                 else:
-                    connectionSocket.sendTo("Error : Move not possible. Position " + cmd[1] + " occupied.", cmd[2])
+                    connectionSocket.sendto("Error : Move not possible. Position " + cmd[1] + " occupied.", cmd[2])
                 # Updates the game board to all users.
                 connectionSocket.sendAll(game.get_board())
 
@@ -102,8 +109,10 @@ while True:
             opponent = game.get_opponent(cmd[1])
             opponent.set_status("Available")
 
-            respond_to_client(player, "GameOver : Thank You for using this application.")
-            respond_to_client(opponent, "GameOver : Your opponent exited the game.")
+            # respond_to_client(player, "GameOver : Thank You for using this application.")
+            # respond_to_client(opponent, "GameOver : Your opponent exited the game.")
+            connectionSocket.sendto("GameOver : Thank You for using this application.", player.get_address())
+            connectionSocket.sendto("GameOver : Your opponent exited the game.", opponent.get_address())
 
             # Removes from the list of players.
             # Removes from the game
@@ -126,4 +135,5 @@ while True:
         # Close client socket
         connectionSocket.close()
 
-    serverSocket.close()
+
+serverSocket.close()

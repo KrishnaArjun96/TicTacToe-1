@@ -19,7 +19,7 @@ def verify(message, sock, address):
         response = encode(command, address)
         sock.sendall(response)
         data = sock.recv(1024)
-        message = data.split(' : ')
+    	message = data.split(' : ')
     print(str(message[1]))
 
 
@@ -38,7 +38,7 @@ def main():
     command = input("Please log in:")
     userid = command
     command = "LOGIN " + userid + " "
-    sock.sendall(command)
+    sock.send(command)
 
     address = sock.recv(1024)
 
