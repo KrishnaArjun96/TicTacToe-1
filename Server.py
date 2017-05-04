@@ -18,7 +18,7 @@ def get_player(address):
 
 
 def print_help():
-    ret = 'Help Menu:\n' + 'HELP:\t\tPrints this menu.\n'
+    ret = 'Help :\n' + 'HELP:\t\tPrints this menu.\n'
     ret += 'LOGIN <urs_id>:\tConnect to the server using the unique user id.\n'
     ret += 'PLACE <position>:\tIssues a new move and the piece is placed at the position in an array.\n'
     ret += 'EXIT:\t\tExits and disconnects.'
@@ -67,14 +67,14 @@ while True:
                 # Print board on each client.
                 connectionSocket.sendall(game.print_board())
                 respond_to_client(players[0], "Message : Please make your move.")
-                respond_to_client(players[1], "Error : Please wait for your turn.")
+                respond_to_client(players[1], "OpponentMessage : Please wait for your turn.")
 
         elif cmd[0] == "PLACE":
             # cmd shall be as follows: PLACE <location> <usr_address>.
             if cmd[2] != game.get_turn():
                 # If it is not the correct user, send appropriate message.
                 # The variable turn stores the address of the user who is supposed to play.
-                connectionSocket.sendTo("Message : Please wait for your turn.", cmd[2])
+                connectionSocket.sendTo("Error : Please wait for your turn.", cmd[2])
             else:
                 # Allows the user to make the move.
                 player = get_player(cmd[2])
@@ -86,6 +86,9 @@ while True:
                         connectionSocket.sendTo("GameOver : You lose!", cmd[2])
                         opponent = game.get_opponent(cmd[2])
                         respond_to_client(opponent, "GameOver : You win!")
+                    else:
+                        respond_to_client(opponent, "Message : Please make your move.")
+                        respond_to_client(player, "OpponentMessage : Please wait for your turn.")
                 else:
                     connectionSocket.sendTo("Error : Move not possible. Position " + cmd[1] + " occupied.", cmd[2])
                 # Updates the game board to all users.
