@@ -1,5 +1,6 @@
 import player
 import tictactoe
+import select
 
 # import socket module
 from socket import *
@@ -21,6 +22,35 @@ serverSocket.bind(('localhost', serverPort))
 serverSocket.listen(2)
 
 print('Welcome to TicTacToe')
+
+# Declaring input sockets where we have to read
+inputSocks = [ serverSocket ]
+
+# Output sockets to which we have to write
+outputSocks = []
+
+while inputSocks:
+    # Waiting for at least one of the sockets to be ready for processing
+    readable, writable, exceptional = select.select(inputSocks, outputSocks, inputSocks)
+
+    for socks in readable:
+
+        if s is serverSocket:
+            connection, addr = serverSocket.accept()
+            inputSocks.append(connection)
+
+        else:
+            # Recieve the data in existing sockets
+            data = s.recv(1024) 
+
+            cmd = data.split(' ')
+            ## This is where we have to handle various cases LOGIN, PLACE and EXIT
+            if cmd[0] is 'LOGIN':
+
+            elif cmd[0] is 'PLACE':
+
+            elif cmd[0] is 'EXIT':
+
     
 cPlayer = None
 game = None

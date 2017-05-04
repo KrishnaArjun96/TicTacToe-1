@@ -2,25 +2,26 @@ import socket
 import sys
 
 
-def encode(command, addr):
+def encode(command):
     split = command.split(' ')
+    print(split[0])
+    
     if split[0] == 'place':
-        command = 'PLACE '  + str(split[1]) + ' ' + str(addr)
+        command = 'PLACE '  + str(split[1])
     elif split[0] == 'exit': 
-        command = 'EXIT ' + str(addr)
-    else:
-        command = 'HELP ' + str(addr)
+        command = 'EXIT'
     return command
 
-def verify(message, sock, address):
+def verify(message, sock):
     while message[0] == "Error":
         print(str(message[1]))
         command = input(">:")
+        encode(command)
         response = encode(command, address)
         sock.sendall(response)
         data = sock.recv(1024)
     	message = data.split(' : ')
-    print(str(message[1]))
+        print(str(message[1]))
 
 
 def main():
@@ -28,55 +29,36 @@ def main():
     # Create a TCP/IP socket
     sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 
-    port_number = input("Enter the port:")
-    machine = input("Machine name:")
+    #port_number = input("Enter the port:")
+    #machine = input("Machine name:")
 
     # Connect the socket to the port where the server is listening
-    sock.connect((machine, int(port_number)))
+    sock.connect(('localhost', 8080))
 
     # logs in user in the format LOGIN <userid>
-    command = input("Please log in:")
-    userid = command
+    userid = input("Please log in:")
     command = "LOGIN " + userid + " "
     sock.send(command)
 
-    address = sock.recv(1024)
+    # Connected to server response from the server
+    connectionResponse = sock.recv(1024)
+    print(connectionResponse)
 
-    # server sends client its address tuple to store for future responses
-    addr = sock.recv(1024)
+    # Wait for the game to start
+    board = sock.recv(1024)
+    print(board)
 
+    # Start accepting commands from the player
     while True:
         
-        #server sends message
-        data = sock.recv(1024)
-        message = data.split(' : ')
-        verify(message, sock, address)
+        command = input(">:")
 
+        request = encode(command)
+        sock.send(request)
 
-        #server sends message
+        #Recieve message
         data = sock.recv(1024)
-        message = data.split(' : ')
-        verify(message, sock, address)
+        print(data)
         
-        if message[0] == "Message":
-            command = input(">:")
-            response = encode(command, address)
-            sock.sendall(response)
-
-        #server sends message
-        data = sock.recv(1024)
-        message = data.split(' : ')
-        verify(message, sock, address)
-
-        #server sends message
-        data = sock.recv(1024)
-        message = data.split(' : ')
-        verify(message, sock, address)
-        
-        if message[0] == "Message":
-            command = input(">:")
-            response = encode(command, address)
-            sock.sendall(response)
-
 
 if __name__ == "__main__": main()
