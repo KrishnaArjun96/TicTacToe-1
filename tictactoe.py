@@ -26,7 +26,7 @@ class TicTacToe:
         self.player_two = player
 
     def is_player_one(self, player):
-        if self.player_one == player:
+        if (self.player_one == player):
             return True
         return False
 
@@ -50,6 +50,19 @@ class TicTacToe:
 
     def set_turn(self, turn):
         self.turn = turn
+
+    def print_board(self):
+        ret = 'Board : \n'
+        i = 0
+        j = 0
+        while j<9:
+            if i == 3:
+                ret += '\n'
+                i = 0
+            i += 1
+            ret += str(self.board[j]) + ' '
+            j += 1
+        return ret
 
     # This method positions the character 'O' or 'X' at the position in the board.
     # This also checks if the position the user wants to enter the char is free or not.
