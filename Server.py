@@ -65,12 +65,12 @@ while True:
             if len(players) == 2:
                 game = tictactoe.TicTacToe(players[0], players[1])
                 # Print board on each client.
+                connectionSocket.sendall(game.print_board())
                 respond_to_client(players[0], "Message : Please make your move.")
                 respond_to_client(players[1], "Error : Please wait for your turn.")
 
         elif cmd[0] == "PLACE":
             # cmd shall be as follows: PLACE <location> <usr_address>.
-            connectionSocket.sendall(game.print_board())
             if cmd[2] != game.get_turn():
                 # If it is not the correct user, send appropriate message.
                 # The variable turn stores the address of the user who is supposed to play.
