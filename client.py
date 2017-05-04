@@ -56,6 +56,7 @@ def main():
 
         request = encode(command)
         sock.send(request)
+        print("Sent...")
 
         #Recieve message
         data = sock.recv(1024)
