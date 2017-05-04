@@ -39,12 +39,12 @@ def main():
         #server sends message
         data = sock.recv(1024)
         message = data.split(' : ')
-        print(str(message))
+        print(str(message[1]))
 
         #server sends message
         data = sock.recv(1024)
         message = data.split(' : ')
-        print(str(message))
+        print(str(message[1]))
         
         if message[0] == "Message":
             command = input(">:")
@@ -54,12 +54,12 @@ def main():
         #server sends message
         data = sock.recv(1024)
         message = data.split(' : ')
-        print(str(board))
+        print(str())
 
         #server sends message
         data = sock.recv(1024)
         message = data.split(' : ')
-        print(str(message))
+        print(str(message[1]))
         
         if message[0] == "Message":
             command = input(">:")
