@@ -70,6 +70,7 @@ while True:
 
         elif cmd[0] == "PLACE":
             # cmd shall be as follows: PLACE <location> <usr_address>.
+            connectionSocket.sendall(game.print_board())
             if cmd[2] != game.get_turn():
                 # If it is not the correct user, send appropriate message.
                 # The variable turn stores the address of the user who is supposed to play.
@@ -79,6 +80,7 @@ while True:
                 player = get_player(cmd[2])
                 if game.move(cmd[1], player.get_char()):
                     # Checks if the Game is OVER. Prints necessary messages if true.
+                    connectionSocket.sendall(game.print_board())
                     game_state = game.is_game_over(player.get_char())
                     if game_state:
                         connectionSocket.sendTo("GameOver : You lose!", cmd[2])
@@ -114,8 +116,6 @@ while True:
             player = get_player(cmd[1])
             respond_to_client(player, print_help())
 
-        # else:
-            # error message.
 
     except IOError:
         # Send response message for file not found
