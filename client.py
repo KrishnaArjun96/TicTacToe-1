@@ -33,13 +33,14 @@ def main():
 
     # Connect the socket to the port where the server is listening
     sock.connect((machine, int(port_number)))
-    address = sock.recv(1024)
 
     # logs in user in the format LOGIN <userid>
     command = input("Please log in:")
     userid = command
     command = "LOGIN " + userid + " "
     sock.sendall(command)
+
+    address = sock.recv(1024)
 
     # server sends client its address tuple to store for future responses
     addr = sock.recv(1024)
