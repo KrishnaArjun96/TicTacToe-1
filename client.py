@@ -27,6 +27,9 @@ def help():
     print("login <userid> - logs user into the TicTacToe server")
     print("place <location> - makes move at location")
     print("exit - exits from game")
+    print("games - lists ongoing games")
+    print("who - lists players who are currently logged in and available to play")
+    print("play <userid> - starts a game with player userid if they are available ")
 
 
 def main():
