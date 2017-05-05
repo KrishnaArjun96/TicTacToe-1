@@ -19,8 +19,6 @@ serverPort = 8080
 serverSocket.bind(('localhost', serverPort))
 serverSocket.listen(2)
 
-print('Welcome to TicTacToe')
-
 # Declaring input sockets where we have to read
 inputSocks = [ serverSocket ]
 
@@ -42,11 +40,9 @@ while inputSocks:
         else:
             # Recieve the data in existing sockets
             data = socks.recv(1024)
-            print(data)
             cmd = data.split(' ')
             # This is where we have to handle various cases LOGIN, PLACE and EXIT
             if cmd[0] == 'LOGIN':
-                print("here")
                 user_id = cmd[1]
                 arrival_time = time.time()
                 
@@ -58,10 +54,9 @@ while inputSocks:
 
                 players.append(p)
                 socks.send("Welcome to TicTacToe\n")
-                print(user_id+ "is connected.\n")
+                print(user_id+ " is connected.\n")
 
                 if len(players) == 2:
-                    print("Game Started")
                     game = tictactoe.TicTacToe(players[0], players[1])
 
                     # Print board on each client.
@@ -74,26 +69,24 @@ while inputSocks:
                     opponent = game.get_player_two()
 
             elif cmd[0] == 'PLACE':
-                if socks != main_player.get_address():
-                    socks.send("Please wait for your turn")
-                else:
-                    if game.move(int(cmd[1]), main_player.get_char()):
-                        socks.send(game.print_board())
-                        print("Placed " + cmd[1] + ".")
-                        opponent.get_address().send(game.print_board())
-                        print(game.print_board() + "\n")
-
-                        game_state = game.is_game_over(main_player.get_char())
-                        if game_state:
-                            socks.send("GameOver : You lose!")
-                            opponent.get_address().send("GameOver : You win!")
+                # if socks != main_player.get_address():
+                #     socks.send("Please wait for your turn")
+                # else:
+                if game.move(int(cmd[1]), main_player.get_char()):
+                    game_state = game.is_game_over(main_player.get_char())
+                    if game_state:
+                        main_player.get_address().send("GameOver : You lose!")
+                        opponent.get_address().send("GameOver : You win!")
                             
-                        else:
-                            socks.send("Wait for your turn")
-                            opponent.get_address().send("Please play your turn")
-
                     else:
-                        socks.send("Invalid move!")
+                        opponent.get_address().send(game.print_board() + "Please play your turn")
+                        main_player.get_address().send(game.print_board() + "Wait for your turn")
+
+                        temp = main_player
+                        main_player = opponent
+                        opponent = temp
+                else:
+                    socks.send("Invalid move!")
 
             elif cmd[0] == 'EXIT':
                 opponent = game.get_opponent(cmd[1])

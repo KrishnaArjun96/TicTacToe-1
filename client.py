@@ -51,8 +51,6 @@ def main():
     print(connectionResponse)
 
     # Wait for the game to start
-    board = sock.recv(1024)
-    print(board)
     message = sock.recv(1024)
     print(message)
 
