@@ -59,8 +59,8 @@ def main():
 
     # Start accepting commands from the player
     while True:
-        
-        command = raw_input(">:")
+        if "play" in message:
+            command = raw_input(">:")
         while command == "help":
             help()
             command = raw_input(">:")
@@ -72,8 +72,8 @@ def main():
         data = sock.recv(1024)
         print(data)
 
-        if data.split(" : ")[0] == 'GameOver':
-            print(data.split(" : ")[1])
+        if "GameOver" in data:
+            print(data)
             break
         
 
