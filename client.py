@@ -70,6 +70,10 @@ def main():
         #Recieve message
         data = sock.recv(1024)
         print(data)
+
+        if data.split(" : ")[0] == 'GameOver':
+            print(data.split(" : ")[1])
+            break
         
 
 if __name__ == "__main__": main()
