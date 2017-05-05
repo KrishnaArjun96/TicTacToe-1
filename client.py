@@ -23,6 +23,11 @@ def verify(message, sock):
     	message = data.split(' : ')
         print(str(message[1]))
 
+def help():
+    print("login <userid> - logs user into the TicTacToe server")
+    print("place <location> - makes move at location")
+    print("exit - exits from game")
+
 
 def main():
 
@@ -48,12 +53,16 @@ def main():
     # Wait for the game to start
     board = sock.recv(1024)
     print(board)
+    message = sock.recv(1024)
+    print(message)
 
     # Start accepting commands from the player
     while True:
         
         command = raw_input(">:")
-
+        while command == "help":
+            help()
+            command = raw_input(">:")
         request = encode(command)
         sock.send(request)
         print("Sent...")
