@@ -61,12 +61,12 @@ def main():
     while True:
         if "play" in message:
             command = raw_input(">:")
-        while command == "help":
-            help()
-            command = raw_input(">:")
-        request = encode(command)
-        sock.send(request)
-        print("Sent...")
+            while command == "help":
+                help()
+                command = raw_input(">:")
+            request = encode(command)
+            sock.send(request)
+            print("Sent...")
 
         #Recieve message
         data = sock.recv(1024)
