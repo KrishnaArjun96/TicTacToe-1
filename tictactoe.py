@@ -62,7 +62,7 @@ class TicTacToe:
             i += 1
             ret += str(self.board[j]) + ' '
             j += 1
-        return ret
+        return ret + '\n'
 
     # This method positions the character 'O' or 'X' at the position in the board.
     # This also checks if the position the user wants to enter the char is free or not.
