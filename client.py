@@ -15,25 +15,14 @@ def encode(command):
         command = "INVALID"
     return command
 
-def verify(message, sock):
-    while message[0] == "Error":
-        print(str(message[1]))
-        command = raw_input(">:")
-        encode(command)
-        response = encode(command)
-        sock.sendall(response)
-        data = sock.recv(1024)
-    	message = data.split(' : ')
-        print(str(message[1]))
-
 def help():
     ret = 'Help: \n'
-    ret += "login <userid> - logs user into the TicTacToe server.\n"
-    ret += "place <location> - makes move at location.\n"
-    ret += "exit - exits from game.\n"
-    ret += "games - lists ongoing games.\n"
-    ret += "who - lists players who are currently logged in and available to play.\n"
-    ret += "play <userid> - starts a game with player userid if they are available.\n"
+    ret += "\tlogin <userid> - logs user into the TicTacToe server.\n"
+    ret += "\tplace <location> - makes move at location.\n"
+    ret += "\texit - exits from game.\n"
+    ret += "\tgames - lists ongoing games.\n"
+    ret += "\twho - lists players who are currently logged in and available to play.\n"
+    ret += "\tplay <userid> - starts a game with player userid if they are available.\n"
     return ret
 
 
