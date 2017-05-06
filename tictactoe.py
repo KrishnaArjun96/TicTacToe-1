@@ -11,6 +11,7 @@ class TicTacToe:
         self.player_one.set_status("Busy")
         self.player_two.set_status("Busy")
         self.turn = self.player_one.get_address()
+        self.moves = 0
 
     # Getters and setters.
     def get_player_one(self):
@@ -50,6 +51,12 @@ class TicTacToe:
 
     def set_turn(self, turn):
         self.turn = turn
+
+    def inc_moves(self):
+        self.moves += 1
+
+    def get_moves(self):
+        return self.moves
 
     def print_board(self):
         ret = 'Board : \n'

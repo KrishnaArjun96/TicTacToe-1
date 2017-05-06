@@ -1,4 +1,5 @@
 class Player:
+
     def __init__(self, user_id, arrival_time, address, char):
         self.user_id = user_id
         self.arrival_time = arrival_time

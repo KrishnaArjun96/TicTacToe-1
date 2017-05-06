@@ -6,6 +6,12 @@ import select
 from socket import *
 import time
 
+def find(user_id):
+    for player in players:
+        if(player.get_user_id() == user_id):
+            return True
+    return False
+
 game = None
 players = []
 
@@ -43,16 +49,19 @@ while inputSocks:
             # This is where we have to handle various cases LOGIN, PLACE and EXIT
             if cmd[0] == 'LOGIN':
                 user_id = cmd[1]
-                arrival_time = time.time()
-                
-                p = None
-                if len(players) == 0:
-                    p = player.Player(user_id, arrival_time, socks, 'X')
-                else:
-                    p = player.Player(user_id, arrival_time, socks, 'O')
+                if(find(user_id)):
+                    socks.send("Error: " + user_id + " already in use. Try again.\n")
+                else: 
+                    arrival_time = time.time()
+                    
+                    p = None
+                    if len(players) == 0:
+                        p = player.Player(user_id, arrival_time, socks, 'X')
+                    else:
+                        p = player.Player(user_id, arrival_time, socks, 'O')
 
-                players.append(p)
-                socks.send("Welcome to TicTacToe!\n")
+                    players.append(p)
+                    socks.send("Welcome to TicTacToe!\n")
 
                 if len(players) == 2:
                     game = tictactoe.TicTacToe(players[0], players[1])
@@ -71,8 +80,13 @@ while inputSocks:
                 #     socks.send("Please wait for your turn")
                 # else:
                 if game.move(int(cmd[1]), main_player.get_char()):
+                    game.inc_moves()
                     game_state = game.is_game_over(main_player.get_char())
-                    if game_state:
+                    if game.get_moves() == 9 and not game_state:
+                        main_player.get_address().send(game.print_board() + "Game Over : Draw Game!")
+                        opponent.get_address().send(game.print_board() + "Game Over : Draw Game!")
+
+                    elif game_state:
                         main_player.get_address().send(game.print_board() + "Game Over : You lose!")
                         opponent.get_address().send(game.print_board() + "Game Over : You win!")
                             

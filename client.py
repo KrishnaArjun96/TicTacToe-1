@@ -15,14 +15,25 @@ def encode(command):
         command = "INVALID"
     return command
 
+def verify(message, sock):
+    while message[0] == "Error":
+        print(str(message[1]))
+        command = raw_input(">:")
+        encode(command)
+        response = encode(command)
+        sock.sendall(response)
+        data = sock.recv(1024)
+    	message = data.split(' : ')
+        print(str(message[1]))
+
 def help():
     ret = 'Help: \n'
-    ret += "\tlogin <userid> - logs user into the TicTacToe server.\n"
-    ret += "\tplace <location> - makes move at location.\n"
-    ret += "\texit - exits from game.\n"
-    ret += "\tgames - lists ongoing games.\n"
-    ret += "\twho - lists players who are currently logged in and available to play.\n"
-    ret += "\tplay <userid> - starts a game with player userid if they are available.\n"
+    ret += "login <userid> - logs user into the TicTacToe server.\n"
+    ret += "place <location> - makes move at location.\n"
+    ret += "exit - exits from game.\n"
+    ret += "games - lists ongoing games.\n"
+    ret += "who - lists players who are currently logged in and available to play.\n"
+    ret += "play <userid> - starts a game with player userid if they are available.\n"
     return ret
 
 
@@ -45,6 +56,16 @@ def main():
 
     # Connected to server response from the server
     connectionResponse = sock.recv(1024)
+
+    while "Error: " in connectionResponse:
+        print(connectionResponse)
+        userid = raw_input("Please log in: ")
+        command = "LOGIN " + userid + " "
+        sock.send(command)
+        connectionResponse = sock.recv(1024)
+        if(connectionResponse == "Welcome to TicTacToe!\n"):
+            break
+
     print(connectionResponse)
 
     # Wait for the game to start
@@ -59,9 +80,9 @@ def main():
             request = encode(command)
             while request == "INVALID" or request == "HELP":
                 if request == "INVALID":
-                    command = raw_input(command + " is invalid.\n" + help() + ">:")
+                    command = raw_input(command + " is invalid.\n" + help() + "\n>:")
                 else:
-                    command = raw_input(help() + ">:")
+                    command = raw_input(help() + "\n>:")
                 request = encode(command)
             sock.send(request)
 
