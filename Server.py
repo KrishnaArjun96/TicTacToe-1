@@ -31,7 +31,6 @@ while inputSocks:
     readable, writable, exceptional = select.select(inputSocks, outputSocks, otherList)
 
     for socks in readable:
-        print("Reached here.")
 
         if socks is serverSocket:
             connection, addr = serverSocket.accept()
@@ -53,8 +52,7 @@ while inputSocks:
                     p = player.Player(user_id, arrival_time, socks, 'O')
 
                 players.append(p)
-                socks.send("Welcome to TicTacToe\n")
-                print(user_id+ " is connected.\n")
+                socks.send("Welcome to TicTacToe!\n")
 
                 if len(players) == 2:
                     game = tictactoe.TicTacToe(players[0], players[1])
@@ -75,12 +73,12 @@ while inputSocks:
                 if game.move(int(cmd[1]), main_player.get_char()):
                     game_state = game.is_game_over(main_player.get_char())
                     if game_state:
-                        main_player.get_address().send("GameOver : You lose!")
-                        opponent.get_address().send("GameOver : You win!")
+                        main_player.get_address().send(game.print_board() + "Game Over : You lose!")
+                        opponent.get_address().send(game.print_board() + "Game Over : You win!")
                             
                     else:
-                        opponent.get_address().send(game.print_board() + "Please play your turn")
-                        main_player.get_address().send(game.print_board() + "Wait for your turn")
+                        opponent.get_address().send(game.print_board() + "Please make your move.")
+                        main_player.get_address().send(game.print_board() + "Please wait for your turn.")
 
                         temp = main_player
                         main_player = opponent
@@ -102,6 +100,5 @@ while inputSocks:
                     game.set_player_one(None)
                 if game.is_player_two(main_player):
                     game.set_player_two(None)
-
 
 serverSocket.close()

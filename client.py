@@ -4,12 +4,15 @@ import sys
 
 def encode(command):
     split = command.split(' ')
-    print(split[0])
     
     if split[0] == 'place':
         command = 'PLACE '  + str(split[1])
     elif split[0] == 'exit': 
         command = 'EXIT'
+    elif split[0] == 'help':
+        command = 'HELP'
+    else:
+        command = "INVALID"
     return command
 
 def verify(message, sock):
@@ -24,12 +27,14 @@ def verify(message, sock):
         print(str(message[1]))
 
 def help():
-    print("login <userid> - logs user into the TicTacToe server")
-    print("place <location> - makes move at location")
-    print("exit - exits from game")
-    print("games - lists ongoing games")
-    print("who - lists players who are currently logged in and available to play")
-    print("play <userid> - starts a game with player userid if they are available ")
+    ret = 'Help: \n'
+    ret += "login <userid> - logs user into the TicTacToe server.\n"
+    ret += "place <location> - makes move at location.\n"
+    ret += "exit - exits from game.\n"
+    ret += "games - lists ongoing games.\n"
+    ret += "who - lists players who are currently logged in and available to play.\n"
+    ret += "play <userid> - starts a game with player userid if they are available.\n"
+    return ret
 
 
 def main():
@@ -45,7 +50,7 @@ def main():
 
     # logs in user in the format LOGIN <userid>
 
-    userid = raw_input("Please log in:")
+    userid = raw_input("Please log in: ")
     command = "LOGIN " + userid + " "
     sock.send(command)
 
@@ -59,21 +64,23 @@ def main():
 
     # Start accepting commands from the player
     while True:
-        if "play" in message:
+
+        if " make " in message or "Invalid " in message:
             command = raw_input(">:")
-            while command == "help":
-                help()
-                command = raw_input(">:")
             request = encode(command)
+            while request == "INVALID" or request == "HELP":
+                if request == "INVALID":
+                    command = raw_input(command + " is invalid.\n" + help() + ">:")
+                else:
+                    command = raw_input(help() + ">:")
+                request = encode(command)
             sock.send(request)
-            print("Sent...")
 
         #Recieve message
         data = sock.recv(1024)
         print(data)
-
-        if "GameOver" in data:
-            print(data)
+        message = data
+        if "Game Over" in data:
             break
         
 
