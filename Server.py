@@ -61,16 +61,16 @@ while inputSocks:
                         p = player.Player(user_id, arrival_time, socks, 'O')
 
                     players.append(p)
-                    socks.send("Welcome to TicTacToe!\n")
+                    socks.send("Welcome to TicTacToe!")
 
                 if len(players) == 2:
                     game = tictactoe.TicTacToe(players[0], players[1])
 
                     # Print board on each client.
-                    game.get_player_one().get_address().send(game.print_board())
-                    game.get_player_two().get_address().send(game.print_board())
-                    game.get_player_one().get_address().send("\n Please make your move.")
-                    game.get_player_two().get_address().send("\n Please wait for your turn.")
+                    game.get_player_one().get_address().send("\n\n" + players[0].get_user_id() + " and " + players[1].get_user_id() + " connected.\n" + game.print_board())
+                    game.get_player_two().get_address().send("\n\n" + players[0].get_user_id() + " and " + players[1].get_user_id() + " connected.\n" + game.print_board())
+                    game.get_player_one().get_address().send("\n\n Please make your move.")
+                    game.get_player_two().get_address().send("\n\n Please wait for your turn.")
 
                     main_player = game.get_player_one()
                     opponent = game.get_player_two()
@@ -101,18 +101,12 @@ while inputSocks:
                     socks.send("Invalid move!")
 
             elif cmd[0] == 'EXIT':
-                opponent = game.get_opponent(cmd[1])
                 opponent.set_status("Available")
 
-                main_player.get_address().send("GameOver : Thank You for using this application.")
-                main_player.get_address().send("GameOver : Your opponent exited the game.")
+                main_player.get_address().send("Game Over : Thank You for using this application.")
+                opponent.get_address().send("Game Over : Your opponent exited the game.")
 
                 # Removes from the list of players.
                 # Removes from the game
-                players.remove(main_player)
-                if game.is_player_one(main_player):
-                    game.set_player_one(None)
-                if game.is_player_two(main_player):
-                    game.set_player_two(None)
 
 serverSocket.close()

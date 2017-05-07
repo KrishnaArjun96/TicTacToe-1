@@ -15,25 +15,14 @@ def encode(command):
         command = "INVALID"
     return command
 
-def verify(message, sock):
-    while message[0] == "Error":
-        print(str(message[1]))
-        command = raw_input(">:")
-        encode(command)
-        response = encode(command)
-        sock.sendall(response)
-        data = sock.recv(1024)
-    	message = data.split(' : ')
-        print(str(message[1]))
-
 def help():
-    ret = 'Help: \n'
-    ret += "login <userid> - logs user into the TicTacToe server.\n"
-    ret += "place <location> - makes move at location.\n"
-    ret += "exit - exits from game.\n"
-    ret += "games - lists ongoing games.\n"
-    ret += "who - lists players who are currently logged in and available to play.\n"
-    ret += "play <userid> - starts a game with player userid if they are available.\n"
+    ret = "\n================================================================================\n"
+    ret += 'Help: \n'
+    ret += "\thelp - prints this menu.\n"
+    ret += "\tlogin <userid> - logs user into the TicTacToe server.\n"
+    ret += "\tplace <location> - makes move at location.\n"
+    ret += "\texit - exits from game.\n"
+    ret += "================================================================================\n"
     return ret
 
 
@@ -42,19 +31,18 @@ def main():
     # Create a TCP/IP socket
     sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 
-    #port_number = input("Enter the port:")
-    #machine = input("Machine name:")
+    print(help())
 
     machine = raw_input("Machine: ")
-    port = input("Port: ")
+    port = raw_input("Port: ")
 
     # Connect the socket to the port where the server is listening
-    sock.connect((machine, port))
+    sock.connect((machine, int(port)))
 
     # logs in user in the format LOGIN <userid>
 
-    userid = raw_input("Please log in: ")
-    command = "LOGIN " + userid + " "
+    userid = raw_input("login ")
+    command = "LOGIN " + userid
     sock.send(command)
 
     # Connected to server response from the server
@@ -62,11 +50,11 @@ def main():
 
     while "Error: " in connectionResponse:
         print(connectionResponse)
-        userid = raw_input("Please log in: ")
+        userid = raw_input("login ")
         command = "LOGIN " + userid + " "
         sock.send(command)
         connectionResponse = sock.recv(1024)
-        if(connectionResponse == "Welcome to TicTacToe!\n"):
+        if(connectionResponse == "Welcome to TicTacToe!"):
             break
 
     print(connectionResponse)
