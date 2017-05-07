@@ -6,7 +6,7 @@ Simply unzip our submission in a directory you wish to run the project from. Fro
 
 Files Submitted:
 
-Server.py - Server
-client.py - Client
-player.py - Player class
-tictactoe.py - TicTacToe game class
+Server.py - Server  
+client.py - Client  
+player.py - Player class  
+tictactoe.py - TicTacToe game class  
