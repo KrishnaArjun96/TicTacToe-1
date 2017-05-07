@@ -1,12 +1,13 @@
 Group Number: 27
 
-Group Members: Samuel McKay, Rahul Agasthya, Krishna Arjun
+Group Members: Krishna Arjun Saravanan, Rahul S Agasthya and Samuel McKay
 
-Simply unzip our submission in a directory you wish to run the project from. From there you will be able to run the project via the instructions in our documentation.
+Simply unzip our submission in a directory you wish to run the project from. 
+Refer to the "Project Documentation.pdf" file for information regarding the requirements and procedure of execution of this project. 
 
 Files Submitted:
 
 Server.py - Server  
-client.py - Client  
-player.py - Player class  
-tictactoe.py - TicTacToe game class  
+Client.py - Client  
+Player.py - Player class  
+Tictactoe.py - TicTacToe game class  

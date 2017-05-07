@@ -1,5 +1,5 @@
-import player
-import tictactoe
+import Player
+import Tictactoe
 import select
 
 # import socket module
@@ -56,15 +56,15 @@ while inputSocks:
                     
                     p = None
                     if len(players) == 0:
-                        p = player.Player(user_id, arrival_time, socks, 'X')
+                        p = Player.Player(user_id, arrival_time, socks, 'X')
                     else:
-                        p = player.Player(user_id, arrival_time, socks, 'O')
+                        p = Player.Player(user_id, arrival_time, socks, 'O')
 
                     players.append(p)
                     socks.send("Welcome to TicTacToe!")
 
                 if len(players) == 2:
-                    game = tictactoe.TicTacToe(players[0], players[1])
+                    game = Tictactoe.TicTacToe(players[0], players[1])
 
                     # Print board on each client.
                     game.get_player_one().get_address().send("\n\n" + players[0].get_user_id() + " and " + players[1].get_user_id() + " connected.\n" + game.print_board())
