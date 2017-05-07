@@ -75,9 +75,9 @@ class TicTacToe:
     # This also checks if the position the user wants to enter the char is free or not.
     # returns true if successful, or false.
     def move(self, position, char):
-        if self.board[position] != '.':
+        if position > 9 or position < 1 or self.board[position - 1] != '.':
             return False
-        self.board[position] = char
+        self.board[position - 1] = char
         return True
 
     def get_board(self):
