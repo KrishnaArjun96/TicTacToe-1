@@ -45,8 +45,11 @@ def main():
     #port_number = input("Enter the port:")
     #machine = input("Machine name:")
 
+    machine = raw_input("Machine: ")
+    port = input("Port: ")
+
     # Connect the socket to the port where the server is listening
-    sock.connect(('localhost', 8080))
+    sock.connect((machine, port))
 
     # logs in user in the format LOGIN <userid>
 

@@ -1,6 +1,12 @@
-===PENDING===
+Group Number: 27
 
-1. Sending the game boards simultaneously to both the players.
-2. Only one player must be allowed to make a move.
-3. Opponent and Player must get appropriate messages.
-4. Exit the game.
+Group Members: Samuel McKay, Rahul Agasthya, Krishna Arjun
+
+Simply unzip our submission in a directory you wish to run the project from. From there you will be able to run the project via the instructions in our documentation.
+
+Files Submitted:
+
+Server.py - Server
+client.py - Client
+player.py - Player class
+tictactoe.py - TicTacToe game class
